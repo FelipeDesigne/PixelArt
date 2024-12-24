@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/icons/icon-192x192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Gerenciamento de Pixel Art" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <title>Pixel Art</title>
+    <script type="module" crossorigin src="/assets/index-Ba03iYcQ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BJor5FYr.css">
+  <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <body>
+    <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('ServiceWorker registration successful:', registration);
+
+            // Atualiza o service worker imediatamente se houver uma nova versão
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed') {
+                  newWorker.postMessage({ type: 'SKIP_WAITING' });
+                }
+              });
+            });
+
+            // Recarrega a página quando o service worker é atualizado
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              if (!refreshing) {
+                refreshing = true;
+                window.location.reload();
+              }
+            });
+          } catch (err) {
+            console.error('ServiceWorker registration failed: ', err);
+          }
+        });
+      }
+
+      // Força o prompt de instalação se disponível
+      window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('beforeinstallprompt event fired');
+        // Previne o comportamento padrão
+        e.preventDefault();
+        // Armazena o evento para uso posterior
+        window.deferredPrompt = e;
+      });
+    </script>
+  </body>
+</html>
